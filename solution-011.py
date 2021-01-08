@@ -1,54 +1,34 @@
 import sys
 
 
-def merge(arr, temp, l, m, h, b):
-    i = l
-    j = m
-    k = l
-    count = 0
-    while i <= m-1 and j <= h:
-        if arr[i] <= arr[j]:
-            temp[k] = arr[i]
-            k += 1
-            i += 1
-        elif arr[j] < arr[i] <= b*arr[j]:
-            temp[k] = arr[j]
-            k += 1
-            j += 1
+def distribute(arr, n):
+    left = 0
+    right = 0
+    if n == 0:
+        print(str(0) + " " + str(0))
+        return
+    if n == 1:
+        print(str(0) + " " + str(arr[0]))
+        return
+    for i in range(n-1, -1, -2):
+        if right > left:
+            right += arr[i-1]
+            left += arr[i]
         else:
-            count += m - i
-            temp[k] = arr[j]
-            k += 1
-            j += 1
-    if i <= m-1 and arr[i] > b * arr[h]:
-        temp[k] = arr[i]
-        k += 1
-        i += 1
-    while i <= m-1:
-        if arr[i] > b*arr[h]:
-            count += 1
-        temp[k] = arr[i]
-        k += 1
-        i += 1
-
-    while j <= h:
-        temp[k] = arr[j]
-        k += 1
-        j += 1
-
-    for i in range(l, h+1):
-        arr[i] = temp[i]
-    return count
-
-
-def countBinversions(arr, temp, l, h, b):
-    count = 0
-    if l < h:
-        mid = int((l+h)/2)
-        count += countBinversions(arr, temp, l, mid, b)
-        count += countBinversions(arr, temp, mid + 1, h, b)
-        count += merge(arr, temp, l, mid+1, h, b)
-    return count
+            right += arr[i]
+            left += arr[i-1]
+        if i-3 < 0:
+            break
+    if n % 2 == 1:
+        if right > left:
+            left += arr[0]
+        else:
+            right += arr[0]
+    if right > left:
+        print(str(left) + " " + str(right))
+    else:
+        print(str(right) + " " + str(left))
+    return
 
 
 def main():
@@ -57,19 +37,12 @@ def main():
 
     fname = sys.argv[1]
     file = open(fname, 'r')
-
-    line = file.readline()  # Read in the numbers in the sequence
+    n = int(file.readline())  # total no of packets
     arr = []
-    # Print the numbers in the sequence one by one.
-    for w in line.split(' '):
-        arr.append(int(w))
-        print(w, end=' ')
-
-    b = int(file.readline())  # The number b
-    print(b)
-    temp = [0] * len(arr)
-    print(countBinversions(arr, temp, 0, len(arr) -1, b))
-
+    for i in range(n):
+        arr.append(int(file.readline()))
+    arr.sort()
+    distribute(arr, n)
     file.close()
 
 
